@@ -1,2 +1,1 @@
-# TgBotRCBO
-This is a telegram bot for automation and convenience of everyday student life.
+<h3><b><i>Bot for everyday university life</i></b></h3>
