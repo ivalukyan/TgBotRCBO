@@ -4,12 +4,13 @@ Bot
 import telebot
 
 from auth.auth import auth_message
-from telebot import types
 from env import TOKEN
 
-from dbschemas.user import create_table
+from dbschemas.user import create_table, update_table, delete_person
 
-from notion.nt import create_page, get_pages, update_page, delete_page
+from notion.nt import create_page
+
+from datetime import datetime,timezone
 
 
 # Token
@@ -25,40 +26,64 @@ def create_rcbo(message):
     """
     Function for create dialog
     """
-
-    if auth_message(message) == 1:
+    if auth_message(message) != 1:
         create_table(message)
-    else:
-        pass
 
 
 @rcbo.message_handler(commands=['update'])
+def user_id(message):
+    if message == '/update' and auth_message(message) == 1:
+        msg = rcbo.send_message(message.chat.id, "Enter your phone ---> ")
+        rcbo.register_next_step_handler(msg, update_rcbo)
+
+
 def update_rcbo(message):
     """
     Function for update dialog
     """
-
-    if auth_message(message) == 1:
-        pass
-    else:
-        pass
+    if auth_message(message) != 1:
+        phone = ""
+        update_table(message, phone)
 
 
 @rcbo.message_handler(commands=['delete'])
+def user_id(message):
+    if message == '/delete' and auth_message(message) == 1:
+        msg = rcbo.send_message(message.chat.id, "Enter ID person ---> ")
+        rcbo.register_next_step_handler(msg, delete_rcbo)
+
+
 def delete_rcbo(message):
     """
     Function for delete dialog
     """
-
     if auth_message(message) == 1:
-        pass
-    else:
-        pass
+        UserId = message.text
+        delete_person(UserId)
 
 
 @rcbo.message_handler(content_types=["text"])
 def answer(message):
-    rcbo.send_message(message.chat.id, "Hi")
+    if auth_message(message) == 1 and message.lower() == "create task":
+
+        msg = rcbo.send_message(message.chat.id, "Enter DATA --> \nExample => \n\nPhysics\ntask 378")
+        rcbo.register_next_step_handler(msg, data)
+
+
+def data(message):
+    _data = message.text.split("\n")
+    print(_data)
+
+    subject = _data[0]
+    task = _data[1]
+    published_date = datetime.now().astimezone(timezone.utc).isoformat()
+
+    data = {
+        "Subjects": {"title": [{"text": {"content": subject}}]},
+        "Tasks": {"rich_text": [{"text": {"content": task}}]},
+        "Published": {"date": {"start": published_date, "end": None}}
+    }
+    create_page(data)
 
 
 # Start bot

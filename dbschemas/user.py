@@ -55,7 +55,7 @@ async def update_table(message, phone: str):
         print("Ошибка sqlite: ", e)
 
 
-async def delete_person(message):
+async def delete_person(user_id):
     """
     DELETE PERSON
     """
@@ -63,6 +63,6 @@ async def delete_person(message):
         connection = sqlite3.connect(f'{PATH}\\users.db')
         cursor = connection.cursor()
 
-        cursor.execute("DELETE FROM Users WHERE id = ?", (message.from_user.id,))
+        cursor.execute("DELETE FROM Users WHERE id = ?", (user_id,))
     except sqlite3.Error as e:
         print("Ошибка sqlite: ", e)
