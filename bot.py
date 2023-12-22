@@ -75,14 +75,17 @@ def callback_handler(call):
     for page in pages:
         props = page["properties"]
         sub = props["Subjects"]["title"][0]["text"]["content"]
-        task = props["Tasks"]["rich_text"][0]["text"]["content"]
+        #task = props["Tasks"]["rich_text"][0]["text"]["content"]
+        tag = props["Tags"]["multi_select"][0]["name"]
+        #tag_1 = props["Tags"]["multi_select"][1]["name"]
         publish = props["Published"]["date"]["start"]
         published = datetime.fromisoformat(publish).date()
 
         if f"{published}" == f"{usl}":
             rcbo.send_message(call.message.chat.id, f"===================\n"
                                                     f"📚Предмет: {sub}\n------------------------------\n"
-                                                    f"✏️Задание: {task}"
+                                                    f"✏️Задание: task\n------------------------------\n"
+                                                    f"🔵Тип: {tag}\n"
                                                     f"\n===================\n")
 
 

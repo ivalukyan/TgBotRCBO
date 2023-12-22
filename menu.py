@@ -4,12 +4,12 @@ Menu
 
 from telebot import types
 
-from notion.nt import create_page, get_pages
+from notion.nt import create_page
 from datetime import (datetime, timezone, date, timedelta)
 
 
 def startMenu(message: any):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = types.KeyboardButton("📆 NOTTION 📒")
     button2 = types.KeyboardButton("🔗 Полезные материалы")
     markup.add(button1, button2)
