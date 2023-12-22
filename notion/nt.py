@@ -17,7 +17,7 @@ headers = {
 }
 
 
-async def create_page(data: dict):
+def create_page(data: dict):
     """
     Create database
     """
@@ -26,10 +26,10 @@ async def create_page(data: dict):
     result = requests.post(create_url, headers=headers, json=payload)
     # print(res.status_code)
 
-    await result
+    return result
 
 
-async def get_pages(num_pages=None):
+def get_pages(num_pages=None):
     """
     Get info database
     """
@@ -51,10 +51,10 @@ async def get_pages(num_pages=None):
         _data = response.json()
         results.extend(_data["results"])
 
-    await results
+    return results
 
 
-async def update_page(page_id: str, data: dict):
+def update_page(page_id: str, data: dict):
     """
     Update database
     """
@@ -62,10 +62,10 @@ async def update_page(page_id: str, data: dict):
     payload = {"properties": data}
     result = requests.patch(url, json=payload, headers=headers)
 
-    await result
+    return result
 
 
-async def delete_page(page_id: str):
+def delete_page(page_id: str):
     """
     Delete database
     """
@@ -74,7 +74,7 @@ async def delete_page(page_id: str):
     payload = {"archived": True}
 
     result = requests.patch(url, json=payload, headers=headers)
-    await result
+    return result
 
 # ============Обработка данных===================
 

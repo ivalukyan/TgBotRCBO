@@ -6,12 +6,12 @@ import telebot
 from auth.auth import auth_message
 from env import TOKEN
 
-from dbschemas.user import create_table, update_table, delete_person
+from env import TO_CHAT_ID
 
-from notion.nt import create_page
+from menu import startMenu, urlMenu, notionMenu
 
-from datetime import datetime,timezone
-
+from notion.nt import create_page, get_pages
+from datetime import (datetime, timezone, date, timedelta)
 
 # Token
 token = TOKEN
@@ -22,68 +22,68 @@ rcbo = telebot.TeleBot(TOKEN)
 
 # Commands (CRUD)
 @rcbo.message_handler(commands=['start'])
-def create_rcbo(message):
+def create_rcbo(message: any):
     """
     Function for create dialog
     """
     if auth_message(message) != 1:
-        create_table(message)
+        rcbo.send_message(message.chat.id, f"Hi, {message.from_user.first_name}", reply_markup=startMenu(message))
+    else:
+        rcbo.send_message(message.chat.id, f"Hi, {message.from_user.first_name}", reply_markup=startMenu(message))
 
 
 @rcbo.message_handler(commands=['update'])
-def user_id(message):
+def user_id(message: any):
     if message == '/update' and auth_message(message) == 1:
         msg = rcbo.send_message(message.chat.id, "Enter your phone ---> ")
         rcbo.register_next_step_handler(msg, update_rcbo)
 
 
-def update_rcbo(message):
+def update_rcbo(message: any):
     """
     Function for update dialog
     """
     if auth_message(message) != 1:
         phone = ""
-        update_table(message, phone)
-
-
-@rcbo.message_handler(commands=['delete'])
-def user_id(message):
-    if message == '/delete' and auth_message(message) == 1:
-        msg = rcbo.send_message(message.chat.id, "Enter ID person ---> ")
-        rcbo.register_next_step_handler(msg, delete_rcbo)
-
-
-def delete_rcbo(message):
-    """
-    Function for delete dialog
-    """
-    if auth_message(message) == 1:
-        UserId = message.text
-        delete_person(UserId)
 
 
 @rcbo.message_handler(content_types=["text"])
-def answer(message):
-    if auth_message(message) == 1 and message.lower() == "create task":
+def answer(message: any):
+    if auth_message(message) == 1 and message.text.lower() == "create task":
 
         msg = rcbo.send_message(message.chat.id, "Enter DATA --> \nExample => \n\nPhysics\ntask 378")
-        rcbo.register_next_step_handler(msg, data)
+
+    elif auth_message(message) == 1 and message.text.lower() == "get info":
+        rcbo.send_message(message.chat.id, "INFO FROM DATABASE")
+
+    elif message.text == "📆 NOTTION 📒":
+        rcbo.send_message(message.chat.id, "Выберите день: ", reply_markup=notionMenu(message))
+
+    elif message.text == "🔗 Полезные материалы":
+        rcbo.send_message(message.chat.id, "Выберите файл: ", reply_markup=urlMenu(message))
 
 
-def data(message):
-    _data = message.text.split("\n")
-    print(_data)
+def recent_message(message: any):
+    rcbo.forward_message(TO_CHAT_ID, message.chat.id, message.message_id)
 
-    subject = _data[0]
-    task = _data[1]
-    published_date = datetime.now().astimezone(timezone.utc).isoformat()
 
-    data = {
-        "Subjects": {"title": [{"text": {"content": subject}}]},
-        "Tasks": {"rich_text": [{"text": {"content": task}}]},
-        "Published": {"date": {"start": published_date, "end": None}}
-    }
-    create_page(data)
+@rcbo.callback_query_handler(func=lambda call: True)
+def callback_handler(call):
+    usl = call.data
+
+    pages = get_pages()
+    for page in pages:
+        props = page["properties"]
+        sub = props["Subjects"]["title"][0]["text"]["content"]
+        task = props["Tasks"]["rich_text"][0]["text"]["content"]
+        publish = props["Published"]["date"]["start"]
+        published = datetime.fromisoformat(publish).date()
+
+        if f"{published}" == f"{usl}":
+            rcbo.send_message(call.message.chat.id, f"===================\n"
+                                                    f"📚Предмет: {sub}\n------------------------------\n"
+                                                    f"✏️Задание: {task}"
+                                                    f"\n===================\n")
 
 
 # Start bot
