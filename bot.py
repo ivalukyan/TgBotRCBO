@@ -88,10 +88,10 @@ def del_task(message: any):
     pageArr = []
     pages = get_pages()
     for page in pages:
-        page_id = page[id]
+        page_id = page['id']
         pageArr.append(page_id)
-
     delete_page(pageArr[int(msg)])
+    rcbo.send_message(message.chat.id, "<b>Страница успешно удалена</b>", parse_mode='HTML')
 
 
 @rcbo.callback_query_handler(func=lambda call: True)
