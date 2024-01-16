@@ -107,13 +107,15 @@ def callback_handler(call):
         subjects_arr = []
         task_arr = []
         tag_arr = []
+        status_arr = []
 
         pages = get_pages()
         for page in pages:
             props = page["properties"]
             name = props["Name"]["title"][0]["text"]["content"]
             text = props["Text"]["rich_text"][0]["text"]["content"]
-            select = props["Select"]["select"][0]["name"]
+            select = props["Select"]["select"]["name"]
+            status = props["Status"]["status"]["name"]
             publish = props["Date"]["date"]["start"]
             published = datetime.fromisoformat(publish).date()
 
@@ -122,10 +124,11 @@ def callback_handler(call):
                 subjects_arr.append(name)
                 task_arr.append(text)
                 tag_arr.append(select)
+                status_arr.append(status)
 
-        if subjects_arr != [] and task_arr != [] and tag_arr != []:
+        if subjects_arr != [] and task_arr != [] and tag_arr != [] and status_arr != []:
             for i in range(0, len_arr):
-                message_text += get_text(subjects_arr, task_arr, tag_arr, i)
+                message_text += get_text(subjects_arr, task_arr, tag_arr, status_arr, i)
         else:
             message_text += "<b><i>На данный день нет информации!</i></b>"
 

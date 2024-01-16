@@ -97,7 +97,8 @@ def getTime():
     return _today
 
 
-def get_text(sub_arr, task_arr, tag_arr, i) -> str:
-    return (f"===================\n📚<b><i>Предмет:</i></b> {sub_arr[i]}\n---------------------------\n"
-            f"✏️<b><i>Задание:</i></b> {task_arr[i]}\n---------------------------"
-            f"\n🔵<b><i>Тип:</i></b> {tag_arr[i]}\n===================\n\n\n")
+def get_text(sub_arr, task_arr, tag_arr, status_arr, i) -> str:
+    return (f"===================\n📚<b><i>ПРЕДМЕТ:</i></b> {sub_arr[i]}\n---------------------------\n"
+            f"✏️<b><i>ИНФО:</i></b>\n{task_arr[i]}\n---------------------------"
+            f"\n<b><i>ТИП:</i></b> {tag_arr[i]}\n---------------------------\n"
+            f"<b><i>СТАТУС:</i></b> {status_arr[i]}\n===================\n\n\n")
