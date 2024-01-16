@@ -111,17 +111,17 @@ def callback_handler(call):
         pages = get_pages()
         for page in pages:
             props = page["properties"]
-            sub = props["Subjects"]["title"][0]["text"]["content"]
-            task = props["Tasks"]["rich_text"][0]["text"]["content"]
-            tag = props["Tags"]["multi_select"][0]["name"]
-            publish = props["Published"]["date"]["start"]
+            name = props["Name"]["title"][0]["text"]["content"]
+            text = props["Text"]["rich_text"][0]["text"]["content"]
+            select = props["Select"]["select"][0]["name"]
+            publish = props["Date"]["date"]["start"]
             published = datetime.fromisoformat(publish).date()
 
             if f"{published}" == f"{usl}":
                 len_arr += 1
-                subjects_arr.append(sub)
-                task_arr.append(task)
-                tag_arr.append(tag)
+                subjects_arr.append(name)
+                task_arr.append(text)
+                tag_arr.append(select)
 
         if subjects_arr != [] and task_arr != [] and tag_arr != []:
             for i in range(0, len_arr):

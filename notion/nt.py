@@ -43,6 +43,11 @@ def get_pages(num_pages=None):
 
     get_data = response.json()
 
+    # For me
+    # import json
+    # with open('db.json', 'w', encoding='utf-8') as f:
+    #     json.dump(get_data, f, ensure_ascii=False, indent=4)
+
     results = get_data["results"]
     while get_data["has_more"] and get_all:
         payload = {"page_size": page_size, "start_cursor": get_data["next_cursor"]}
